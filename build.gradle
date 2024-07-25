@@ -1,140 +1,62 @@
 plugins {
-    id 'java-library'
+    id 'java'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.7.3'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
-    id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id "io.github.goooler.shadow" version "8.1.8"
 }
 
 group 'club.minnced'
 version '2.0.2'
 
-sourceSets {
-    examples {
-        compileClasspath = main.output
-        runtimeClasspath = main.output
-        java.srcDirs = ['examples/java']
-        kotlin.srcDirs = ['examples/kotlin']
-    }
-}
-
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
-    jcenter()
+    mavenCentral()
+    maven {
+        url "https://nexus.web.cern.ch/nexus/content/repositories/public/"
+    }
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+    maven {
+        url "https://maven.scijava.org/content/repositories/public/"
+    }
 }
 
 dependencies {
-    api 'net.java.dev.jna:jna:4.4.0'
+    implementation 'net.java.dev.jna:jna:5.14.0'
     implementation 'club.minnced:discord-rpc-release:v3.4.0'
-    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
-    examplesCompile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.21'
-    examplesCompile compileJava.classpath
+    implementation 'org.jetbrains:annotations:24.1.0'
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.incremental = true
     options.encoding = 'UTF-8'
 }
 
-// Publishing
-
-task sources(type: Copy) {
-    from 'src/main/java'
-    into "$buildDir/sources"
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
 
-classes.dependsOn sources
-
+// Publishing
 jar {
-    baseName = project.name
     manifest {
         attributes 'Implementation-Version': version
         attributes 'Target-Platforms': 'win32-x86-64, win32-x86, linux-x86-64, darwin'
     }
-
-    dependsOn sources
-}
-
-javadoc {
-    failOnError = false
-    options.author()
-    options.encoding = 'UTF-8'
-    if (JavaVersion.current().java9Compatible)
-        options.addBooleanOption('html5', true) // jdk-9 docs
-    options.links("https://java-native-access.github.io/jna/4.2.1/", "https://docs.oracle.com/javase/8/docs/api/")
-
-    dependsOn sources
-    source = sources.destinationDir
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from "$buildDir/sources"
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
 }
 
 publishing {
     publications {
-        BintrayRelease(MavenPublication) {
+        mavenJava(MavenPublication) {
             from components.java
             groupId group
             artifactId archivesBaseName
             version version
-
-            artifact javadocJar
-            artifact sourcesJar
         }
     }
-}
-
-bintray {
-    user = getProjectProperty('bintrayUsername')
-    key = getProjectProperty('bintrayApiKey')
-    publications = ["BintrayRelease"]
-    pkg {
-        repo = 'maven'
-        name = project.name
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/MinnDevelopment/java-discord-rpc.git'
-        githubRepo = 'MinnDevelopment/java-discord-rpc'
-        publish = true
-        version {
-            name = project.version
-            vcsTag = project.version
-            released = new Date()
-            gpg {
-                sign = true
-            }
-        }
-    }
-}
-
-bintrayUpload {
-    dependsOn clean
-    dependsOn build
-    build.mustRunAfter clean
-
-    onlyIf { !getProjectProperty('bintrayUsername').empty }
-    onlyIf { !getProjectProperty('bintrayApiKey').empty }
-}
-
-def getProjectProperty(String key) {
-    return hasProperty(key) ? this.properties[key] : ''
 }
 
 build {
-    dependsOn jar
-    dependsOn javadocJar
-    dependsOn sourcesJar
     dependsOn shadowJar
-
-    jar.mustRunAfter clean
-    javadocJar.mustRunAfter jar
-    sourcesJar.mustRunAfter javadocJar
-    shadowJar.mustRunAfter sourcesJar
 }
