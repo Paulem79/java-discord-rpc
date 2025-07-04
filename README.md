@@ -5,11 +5,13 @@
 
 # NOTICE
 
+Message from the original author:<br>
 This library is discontinued since the original project [discord-rpc](https://github.com/discord/discord-rpc) is no longer being maintained. Discord now expects you to use the [Game SDK](https://discord.com/developers/docs/game-sdk/sdk-starter-guide) which is not open source and will not be wrapped by this project. More information on the deprecation notice can be found here: [Deprecation and Migration to Discord GameSDK](https://github.com/discord/discord-rpc/issues/290)
 
-# java-discord-rpc
+Message from Paulem :<br>
+*Actually, this library still works and I wanted to keep it usable and accessible to anyone who needs it*
 
-[ ![bintray-version][bintray-version] ][bintray-download] [ ![jitpack-version][jitpack-version] ][jitpack-setup]
+# java-discord-rpc
 
 This library contains Java bindings for [Discord's official RPC SDK](https://github.com/discord/discord-rpc) using JNA.
 
@@ -19,13 +21,11 @@ The binaries can be found at [MinnDevelopment/discord-rpc-release](https://githu
 ## Documentation
 
 You can see the official discord documentation in the [API Documentation](https://discordapp.com/developers/docs/rich-presence/how-to).
-<br>Alternatively you may visist the javadoc at [jitpack](https://jitpack.io/com/github/MinnDevelopment/java-discord-rpc/master-SNAPSHOT/javadoc/index.html).
+<br>Alternatively you may visist the javadoc at [the maven repo](https://maven.paulem.ovh/javadoc/releases/club/minnced/java-discord-rpc/2.0.3).
 
 ## Setup
 
 In the follwing please replace `%VERSION%` with the version listed above.
-
-Note: Version **2.0.0** and above will be listed on **jcenter**, if you are interested in older builds use **jitpack**.
 
 ### Gradle
 
@@ -51,9 +51,9 @@ dependencies {
 
 ```xml
 <repository>
-    <id>jcenter</id>
-    <url>https://jcenter.bintray.com</url>
-    <name>jcenter-bintray</name>
+    <id>paulem-releases</id>
+    <name>Paulem's Repo</name>
+    <url>https://maven.paulem.ovh/releases</url>
 </repository>
 ```
 
@@ -73,7 +73,7 @@ dependencies {
 2. `git clone https://github.com/minndevelopment/java-discord-rpc`
 3. `cd java-discord-rpc`
 4. `./gradlew build` or on windows `gradlew build`
-5. Get the jar from `build/libs` with the name `java-discord-rpc-%VERSION%-all.jar`
+5. Get the jar from `build/libs` with the name `java-discord-rpc-%VERSION%.jar`
 
 ## Examples
 
@@ -108,15 +108,6 @@ public class Main {
     }
 }
 ```
-
-### Community Examples
-
-If you want to add an example to the [example directory](https://github.com/MinnDevelopment/java-discord-rpc/tree/master/examples)
-you can do so by making a PR with your package and source.
-All I ask from you is that the example does not abuse the API in any way and that your example can compile.
-If you would like to add examples in other JVM languages you must first add support via the `build.gradle` file.
-
-For example, `examples/java/club/minnced/rpc/examples/MyGame.java` would be your example file relative to the project root directory.
 
 ## License
 
