@@ -15,11 +15,6 @@ sourceSets {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
 repositories {
     mavenCentral()
     mavenLocal()
@@ -48,74 +43,29 @@ dependencies {
     compileOnly("com.google.code.findbugs:jsr305:3.0.2")
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.shadowJar {
+    archiveClassifier.set("")
+}
+
 tasks.withType<JavaCompile> {
     options.isIncremental = true
     options.encoding = "UTF-8"
 }
 
-tasks.build {
-    dependsOn(tasks.jar)
-    dependsOn(tasks.shadowJar)
-    tasks.jar { mustRunAfter(tasks.clean) }
-}
-
 // Publication
-
-val sources by tasks.registering(Copy::class) {
-    from("src/main/java")
-    into("${layout.buildDirectory}/sources")
-}
-
-tasks.classes {
-    dependsOn(sources)
-}
-
 tasks.jar {
-    archiveBaseName.set(project.name)
     manifest {
         attributes(
             "Implementation-Version" to version,
             "Target-Platforms" to "win32-x86-64, win32-x86, linux-x86-64, darwin"
         )
-    }
-    dependsOn(sources)
-}
-
-tasks.javadoc {
-    options.encoding = "UTF-8"
-    dependsOn(sources)
-    source = fileTree(sources.get().destinationDir)
-}
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from("$buildDir/sources")
-    dependsOn(tasks.classes)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(tasks.javadoc.get().destinationDir)
-    dependsOn(tasks.javadoc)
-}
-
-tasks.build {
-    dependsOn(tasks.jar)
-    dependsOn(javadocJar)
-    dependsOn(sourcesJar)
-    dependsOn(tasks.shadowJar)
-
-    tasks.jar {
-        mustRunAfter(tasks.clean)
-    }
-    javadocJar {
-        mustRunAfter(tasks.jar)
-    }
-    sourcesJar {
-        mustRunAfter(javadocJar)
-    }
-    tasks.shadowJar {
-        mustRunAfter(sourcesJar)
     }
 }
 
@@ -138,4 +88,8 @@ publishing {
             from(components["java"])
         }
     }
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
