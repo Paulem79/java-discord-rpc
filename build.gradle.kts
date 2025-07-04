@@ -38,9 +38,9 @@ repositories {
 }
 
 dependencies {
-    implementation("net.java.dev.jna:jna:4.4.0")
+    implementation("net.java.dev.jna:jna:5.14.0")
     implementation("club.minnced:discord-rpc-release:v3.3.0")
-    compileOnly("com.google.code.findbugs:jsr305:3.0.2")
+    implementation("org.jetbrains:annotations:26.0.2")
 }
 
 java {
