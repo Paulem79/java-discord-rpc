@@ -18,9 +18,8 @@ package club.minnced.discord.rpc;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Core library binding for the official <a href="https://github.com/discordapp/discord-rpc" target="_blank">Discord RPC SDK</a>.
@@ -39,7 +38,7 @@ public interface DiscordRPC extends Library
     /**
      * Library instance.
      */
-    DiscordRPC INSTANCE = Native.loadLibrary("discord-rpc", DiscordRPC.class);
+    DiscordRPC INSTANCE = Native.load("discord-rpc", DiscordRPC.class);
 
     /**
      * Used to decline a request via {@link #Discord_Respond(String, int)}
@@ -73,7 +72,7 @@ public interface DiscordRPC extends Library
      * @param steamId
      *        Possible steam ID of the running game
      */
-    void Discord_Initialize(@Nonnull String applicationId,
+    void Discord_Initialize(@NotNull String applicationId,
                             @Nullable DiscordEventHandlers handlers,
                             boolean autoRegister,
                             @Nullable String steamId);
@@ -135,7 +134,7 @@ public interface DiscordRPC extends Library
      * 
      * @see   club.minnced.discord.rpc.DiscordUser#userId DiscordUser.userId
      */
-    void Discord_Respond(@Nonnull String userid, int reply);
+    void Discord_Respond(@NotNull String userid, int reply);
 
     /**
      * Updates the registered event handlers to the provided struct.
